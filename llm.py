@@ -44,7 +44,14 @@ class LLMInterface:
             self.qa_pipeline = None
     
     def generate_response(self, query: str, context: str, max_tokens: int = 150) -> str:
+
+        if not self._is_meaningful_query(query):
+            return "I can only answer questions related to insurance, trading, and customer support. Please ask a relevant question."
         
+
+        if not context or len(context.strip()) < 20:
+            return "I don't know. Please ask about insurance policies, trading, account opening, or customer support topics."
+
         context = self._clean_context(context)
         
         try:
@@ -63,6 +70,33 @@ class LLMInterface:
         except Exception as e:
             print(f"Error during generation: {e}")
             return self._fallback_response(query, context)
+    
+    def _is_meaningful_query(self, query: str) -> bool:
+        
+        import re
+        
+
+        words = re.findall(r'\b[a-zA-Z]{2,}\b', query.lower())
+        
+        if len(words) == 0:
+            return False
+        
+        
+        gibberish_patterns = [
+            r'(.)\1{3,}',  
+            r'^(da|ba|ja|ka|la|ma|na|pa|ra|sa|ta|wa|za){2,}$',  
+            r'^[aeiou]+$',  
+            r'^[bcdfghjklmnpqrstvwxyz]+$'  
+        ]
+        
+        meaningful_words = 0
+        for word in words:
+            is_gibberish = any(re.search(pattern, word) for pattern in gibberish_patterns)
+            if not is_gibberish and len(set(word)) >= 2:
+                meaningful_words += 1
+        
+        
+        return meaningful_words > 0
     
     def _generate_with_flan_t5(self, query: str, context: str, max_tokens: int) -> str:
         prompt = f"Answer the question based on the context.\n\nContext: {context}\n\nQuestion: {query}\n\nAnswer:"
@@ -144,7 +178,7 @@ class LLMInterface:
             if keyword in query_lower:
                 return response
         
-        return "I don't have enough information to answer that question. Please contact customer support for assistance."
+        return "I Don't know"
     
     def _clean_context(self, context: str) -> str:
         context = re.sub(r'\s+', ' ', context.strip())

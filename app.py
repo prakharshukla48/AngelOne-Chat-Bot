@@ -94,19 +94,28 @@ def main():
                 search_results = st.session_state.vector_store.search(prompt, k=3)
                 
                 if not search_results:
-                    response = "I don't have any relevant information to answer your question."
+                    response = "I don't Know. Please ask about insurance policies, trading, account opening, or customer support topics."
                 else:
-                    # Format context and generate response
+                    
                     context = st.session_state.llm.format_context(search_results)
                     response = st.session_state.llm.generate_response(prompt, context)
                 
                 st.markdown(response)
                 
-                with st.expander("📚 Sources"):
-                    for i, (text, score) in enumerate(search_results):
-                        st.write(f"**Source {i+1}** (Relevance: {1-score:.2f})")
-                        st.write(text[:300] + "..." if len(text) > 300 else text)
-                        st.divider()
+                if search_results:
+                    with st.expander("📚 Sources"):
+                        for i, (text, score) in enumerate(search_results):
+                            st.write(f"**Source {i+1}** (Relevance: {1-score:.2f})")
+                            st.write(text[:300] + "..." if len(text) > 300 else text)
+                            st.divider()
+                else:
+                    with st.expander("ℹ️ Search Info"):
+                        st.write("No relevant documents found for this query.")
+                        st.write("Try asking about:")
+                        st.write("• Insurance policies and coverage")
+                        st.write("• Account opening and trading")
+                        st.write("• Customer support topics")
+                        st.write("• Fees and charges")
         
         st.session_state.chat_history.append({"role": "assistant", "content": response})
     

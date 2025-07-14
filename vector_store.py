@@ -1,5 +1,6 @@
 import os
 import pickle
+import re
 from sentence_transformers import SentenceTransformer
 import faiss
 import numpy as np
@@ -13,6 +14,8 @@ class VectorStore:
         self.index = None
         self.documents = []
         self.embeddings = None
+        # Threshold for relevance - higher means stricter filtering
+        self.relevance_threshold = 1.2  
         
     def create_embeddings(self, documents):
         """Create embeddings for documents"""
@@ -31,10 +34,30 @@ class VectorStore:
         self.embeddings = embeddings
         
         print(f"Created vector store with {len(documents)} documents")
+    
+    def _is_valid_query(self, query: str) -> bool:
+        """Check if query contains meaningful words"""
+        # Remove special characters and split into words
+        words = re.findall(r'\b[a-zA-Z]{2,}\b', query.lower())
+        
+        # Filter out pure gibberish (repeated letters/syllables)
+        meaningful_words = []
+        for word in words:
+            # Skip words with too many repeated characters
+            if len(set(word)) >= 2 or word in ['i', 'a', 'is', 'it', 'to', 'do', 'go', 'no']:
+                meaningful_words.append(word)
+        
+        # Need at least one meaningful word
+        return len(meaningful_words) > 0
         
     def search(self, query: str, k: int = 3) -> List[Tuple[str, float]]:
-        """Search for similar documents"""
+        """Search for similar documents with relevance filtering"""
         if self.index is None:
+            return []
+        
+        # Check if query is meaningful
+        if not self._is_valid_query(query):
+            print(f"Query rejected: '{query}' appears to be gibberish")
             return []
         
         # Create embedding for query
@@ -46,7 +69,15 @@ class VectorStore:
         results = []
         for i, (distance, idx) in enumerate(zip(distances[0], indices[0])):
             if idx < len(self.documents):
-                results.append((self.documents[idx].page_content, float(distance)))
+                # Only include results that are reasonably relevant
+                if distance <= self.relevance_threshold:
+                    results.append((self.documents[idx].page_content, float(distance)))
+                else:
+                    print(f"Result {i+1} filtered out: distance {distance:.3f} > threshold {self.relevance_threshold}")
+        
+        # If no relevant results found, return empty list
+        if not results:
+            print(f"No relevant results found for query: '{query}'")
         
         return results
     

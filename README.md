@@ -7,7 +7,7 @@ A Retrieval-Augmented Generation (RAG) chatbot that answers questions based on c
 - 📄 PDF document processing
 - 🌐 Webpage content scraping
 - 🔍 Semantic search using FAISS
-- 🤖 OpenAI GPT-3.5 powered responses
+- 🤖 Google FLAN-T5-Small
 - 💬 Interactive chat interface
 - 🚀 Web-hosted deployment ready
 
@@ -16,19 +16,22 @@ A Retrieval-Augmented Generation (RAG) chatbot that answers questions based on c
 ### 1. Prerequisites
 
 - Python 3.8+
-- OpenAI API key
 
 ### 2. Installation
 
 ```bash
 # Clone the repository
-git clone <your-repo-url>
+git clone https://github.com/prakharshukla48/AngelOne-Chat-Bot.git
 cd reg-chatbot
 
 # Install dependencies
 pip install -r requirements.txt
 ```
 
-### 3. Configuration
+### 3. Running 
 
-1. **Create `.env` file:**
+``` run using -> streamlit run app.py```
+
+### 4. Using Chatbot 
+
+``` enter query -> It will return upto 3 valid reponses, if any matches the query.

@@ -49,7 +49,7 @@ class LLMInterface:
             return "I can only answer questions related to insurance, trading, and customer support. Please ask a relevant question."
         
 
-        if not context or len(context.strip()) < 20:
+        if not context or len(context.strip()) < 10:
             return "I don't know. Please ask about insurance policies, trading, account opening, or customer support topics."
 
         context = self._clean_context(context)
@@ -143,7 +143,7 @@ class LLMInterface:
             result = self.qa_pipeline(question=query, context=context)
             confidence = result['score']
             
-            if confidence > 0.1:
+            if confidence > 0.08:
                 return result['answer']
             else:
                 return "I don't Know."

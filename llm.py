@@ -143,7 +143,7 @@ class LLMInterface:
             result = self.qa_pipeline(question=query, context=context)
             confidence = result['score']
             
-            if confidence > 0.08:
+            if confidence > 0.1:
                 return result['answer']
             else:
                 return "I don't Know."

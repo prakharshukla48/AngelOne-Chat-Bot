@@ -14,7 +14,7 @@ class VectorStore:
         self.index = None
         self.documents = []
         self.embeddings = None
-        self.relevance_threshold = 1.8
+        self.relevance_threshold = 1.5
         
     def create_embeddings(self, documents):
         

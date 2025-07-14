@@ -1,0 +1,13 @@
+openai==0.28
+langchain
+sentence-transformers
+faiss-cpu
+pypdf2
+beautifulsoup4
+requests
+streamlit
+ipython
+python-docx
+python-dotenv
+transformers
+torch

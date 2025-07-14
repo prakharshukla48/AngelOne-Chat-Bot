@@ -136,7 +136,7 @@ class LLMInterface:
         answer = response[len(prompt):].strip()
         
         answer = answer.split('\n')[0]
-        return answer if answer else "I don't have enough information to answer that question."
+        return answer if answer else "I don't Know."
     
     def _generate_with_qa_pipeline(self, query: str, context: str) -> str:
         try:
@@ -146,7 +146,7 @@ class LLMInterface:
             if confidence > 0.1:
                 return result['answer']
             else:
-                return "I don't have enough information to answer that question."
+                return "I don't Know."
         except:
             return self._fallback_response(query, context)
     

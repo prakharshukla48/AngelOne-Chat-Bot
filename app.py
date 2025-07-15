@@ -37,7 +37,10 @@ def initialize_system():
             all_file_docs = ingestor.load_all_documents()
             st.info(f"Loaded {len(all_file_docs)} documents")
             
-            web_docs = ingestor.scrape_webpage(URL)
+            web_docs = ingestor.scrape_website_recursive(
+                start_url="https://www.angelone.in/support",
+                max_pages=10  # Adjust based on your needs
+            )
             st.info(f"Scraped {len(web_docs)} web sections")
             
             all_docs = all_file_docs + web_docs
@@ -68,7 +71,7 @@ def main():
     st.markdown("Ask me anything about AngelOne services!")
     
     if 'vector_store' not in st.session_state or 'llm' not in st.session_state:
-        vector_store, llm = initialize_system() # Initialize system
+        vector_store, llm = initialize_system() 
         st.session_state.vector_store = vector_store
         st.session_state.llm = llm
     

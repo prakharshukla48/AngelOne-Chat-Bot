@@ -48,7 +48,7 @@ class VectorStore:
         
         return len(meaningful_words) > 0
         
-    def search(self, query: str, k: int = 3) -> List[Tuple[str, float]]:
+    def search(self, query: str, k: int = 2) -> List[Tuple[str, float]]:
         
         if self.index is None:
             return []
